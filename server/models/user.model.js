@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-    name: {
+    username: {
         type: String,
         required: true,
         unique: true
@@ -15,7 +15,17 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 4
-    }
+    },
+    avatar: {
+        type: String,
+        default: 'avatar.png'
+    },
+    posts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Post'
+        }
+    ],
 },
 { timestamps: true }
 )
