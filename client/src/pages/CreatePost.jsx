@@ -36,6 +36,7 @@ export default function CreatePost() {
             formData.append('content', post.content);
             formData.append('image', post.image);
             formData.append('userId', localStorage.getItem('userId'));
+            console.log('formData: ', formData)
             await axios.post('http://localhost:5000/posts', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'

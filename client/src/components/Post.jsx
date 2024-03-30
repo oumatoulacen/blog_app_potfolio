@@ -19,7 +19,9 @@ function deletePost(id) {
 }
 
 function Post({ post }) {
-  const {_id, title, content, image} = {...post}
+  const {_id, title, content, image, user } = {...post}
+  console.log(user)
+  const userId = localStorage.getItem('userId');
   return (
     <div>
         <Card className="min-w-[384px] min-h-[384px] max-w-sm max-h-sm mb-8 mx-1 bg-white dark:bg-gray-800 shadow-lg dark:shadow-none hover:shadow-xl transition-shadow duration-300 ease-in-out">
@@ -32,13 +34,17 @@ function Post({ post }) {
                     {content}
             </p>
             <div className="flex items-center justify-between space-x-4">
-              <Link to={`/posts/${_id}`} className="text-green-600 hover:underline">Read more</Link>
-              <div className="space-x-3">
+              <Link to={`/posts/${_id}`} className="text-green-600 hover:underline py-2">Read more</Link>
+             {
+              user && userId === user && (
+                <div className="space-x-3">
                 <Link to={`/posts/edit-post/${_id}`}>
                   <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Edit</button>
                 </Link>
                 <button onClick={()=>deletePost(_id)} className="bg-slate-500 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Delete</button>
               </div>
+              )
+             }
             </div>
 
         </Card>
