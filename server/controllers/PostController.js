@@ -8,6 +8,7 @@ module.exports = {
     create: async (req, res) => {
         try {
             const { title, content, userId } = req.body
+            console.log('body: ', req.body)
             if (!title || !content) {
                 return res.status(400).json({ msg: 'All fields are required' })
             }
@@ -56,27 +57,23 @@ module.exports = {
     },
     update: async (req, res) => {
         try {
-            const { title, content, userId } = req.body
-            console.log(req.body)
-            const image = req.file.filename
-            if (!image) {
-                image = req.body.filename
-            }
-            if (!req.file && !image) {
-                return res.status(400).json({ msg: 'Please upload an image' })
+            let image;
+            const { title, content } = req.body;
+            if (req.file) {
+                image = req.file.filename
             }
             if (!title || !content) {
                 return res.status(400).json({ msg: 'All fields are required' })
             }
 
-
-
             const post = await Post.findById(req.params.id)
             if (!post) {
                 return res.status(404).json({ msg: 'Post not found' })
             }
+            const postUpdate = image ? { title, content, image } : { title, content }
 
-            await Post.findByIdAndUpdate(req.params.id, { title, body })
+            await Post.findByIdAndUpdate(req.params.id, postUpdate, { new: true})
+            
             res.json({ msg: 'Post updated successfully' })
         } catch (error) {
             return res.status(500).json({ msg: error.message })

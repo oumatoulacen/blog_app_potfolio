@@ -13,7 +13,7 @@ router.get('', PostController.find)
 router.get('/:id', PostController.findById)
 
 // Update a post
-router.put('/:id', PostController.update)
+router.put('/:id', upload.single('image'), PostController.update)
 
 // Delete a post
 router.delete('/:id', PostController.delete)
