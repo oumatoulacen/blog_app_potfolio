@@ -18,4 +18,10 @@ router.put('/:id', upload.single('image'), PostController.update)
 // Delete a post
 router.delete('/:id', PostController.delete)
 
+// handle reads
+router.put('/:postId/reads/:userId', PostController.reads)
+
+// handle likes
+router.put('/:postId/likes/:userId', PostController.likes)
+
 module.exports = router
