@@ -7,8 +7,7 @@ const path = require('path')
 module.exports = {
     create: async (req, res) => {
         try {
-            const { title, content, userId } = req.body
-            console.log('body: ', req.body)
+            const { title, content, category, userId } = req.body
             if (!title || !content) {
                 return res.status(400).json({ msg: 'All fields are required' })
             }
@@ -21,7 +20,8 @@ module.exports = {
                 title,
                 content,
                 image,
-                user: userId
+                userId,
+                category
             })
 
             await newPost.save()
@@ -51,7 +51,7 @@ module.exports = {
     },
     findByUserId: function (req, res) {
         const userId = req.params.id
-        Post.find({ user: userId })
+        Post.find({ userId: userId })
             .then(posts => res.json(posts))
             .catch(err => res.status(400).json('Error: ' + err))
     },
@@ -92,25 +92,47 @@ module.exports = {
             return res.status(500).json({ msg: error.message })
         }
     },
-    upload: async (req, res) => {
+    // get all posts of a category
+    findByCategory: async (req, res) => {
         try {
-            if (!req.file) {
-                return res.status(400).json({ msg: 'Please upload a file' })
-            }
-
-            const post = await Post.findById(req.params.id)
-            if (!post) {
-                return res.status(404).json({ msg: 'Post not found' })
-            }
-
-            if (post.image) {
-                fs.unlinkSync(path.join(__dirname, '../public', 'images', post.image))
-            }
-
-            await Post.findByIdAndUpdate(req.params.id, { image: req.file.filename })
-            res.json({ msg: 'Image uploaded successfully' })
+            const category = req.params.category
+            const posts = await Post.find({ category: category })
+            res.json(posts)
         } catch (error) {
             return res.status(500).json({ msg: error.message })
+        }
+    },
+    // increment reads
+    reads: async (req, res) => {
+        const postId = req.params.postId;
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({ msg: 'Post not found' });
+        }
+        post.reads += 1;
+        await post.save();
+        res.json(post);
+    },
+    likes: async (req, res) => {
+        try {
+            const postId = req.params.postId;
+            const userId = req.params.userId;
+
+            let post = await Post.findById(postId);
+            if (!post) {
+                return res.status(404).json({ msg: 'Post not found' });
+            }
+            // check if likes has userId to remove it if not add it
+            if (post.likes.includes(userId)) {
+                await Post.findByIdAndUpdate(postId, { $pull: { likes: userId } }, { new: true });
+            } else {
+                post.likes.push(userId);
+            }
+            await post.save();
+            post = await Post.findById(postId);
+            res.json(post);
+        } catch (error) {
+            return res.status(500).json({ msg: error.message });
         }
     }
 }
