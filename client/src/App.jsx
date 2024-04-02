@@ -12,10 +12,13 @@ import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import Contact from './pages/ContactUs'
 import Projects from './pages/Projects'
+import UserProfile from './pages/UserProfile'
 import PostDetails from './pages/PostDetails'
 import ResetPassword from './pages/PasswordEdit'
+import Category from './pages/Category'
 import Footer from './components/Footer'
 import NoPage from './pages/NoPage'
+
 
 // component imports
 import Header from './components/Header'
@@ -28,6 +31,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/users/:id" element={<UserProfile />} />
           <Route path="/create-post" element={<CreatePost />} />
           <Route path="/posts/edit-post/:id" element={<EditPost />} />
           <Route path="/about" element={<About />} />
@@ -37,6 +41,7 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/posts/:id" element={<PostDetails />} />
+          <Route path="/categories/:category" element={<Category />} />
           <Route path="/contact-us" element={<Contact />} />
           <Route path="*" element={<NoPage />} />
         </Routes>
