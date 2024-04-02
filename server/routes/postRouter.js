@@ -24,4 +24,7 @@ router.put('/:postId/reads/:userId', PostController.reads)
 // handle likes
 router.put('/:postId/likes/:userId', PostController.likes)
 
+// get the posts of a category
+router.get('/categories/:category', PostController.findByCategory)
+
 module.exports = router
