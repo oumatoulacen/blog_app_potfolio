@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 import logo from '../assets/mark.svg'
+import googleIcon from '../assets/googleIcon.png'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 
@@ -29,12 +30,11 @@ export default function Signin() {
       // login a user
       axios.post('http://localhost:5000/auth/login', credentials)
         .then((res) => {
-
           console.log('response data:', res.data)
           // clear the form
           setCredentials({email: '', password: ''})
           setNotification('logged successfully!');
-          localStorage.setItem('userId', res.data._id)
+          localStorage.setItem('activeUserId', res.data._id)
           // Clear notification after 3 seconds
           setTimeout(() => {
               setNotification('');
@@ -112,6 +112,17 @@ export default function Signin() {
                 Sign up
               </a>
             </p>
+            {/* sign in with googlr */}
+            {/* <div className="mt-6">
+              <button
+                type="button"
+                className="flex w-full justify-center rounded-md bg-gray-200 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-700 shadow-sm hover:bg-slate-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+
+              >
+                <img src={googleIcon} alt="icon" className='w-5 h-5 mr-4'/>
+                Sign in with Google
+              </button>
+            </div> */}
           </div>
         </div>
       </div>
