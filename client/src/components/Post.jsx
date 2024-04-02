@@ -18,9 +18,9 @@ function Post({ post }) {
 
     // set the likes and reads
     useEffect(() => {
-        setLikes(post.likes.length)
+        setLikes(post.likes?.length)
         setReads(post.reads)
-        }, [])
+        }, [post.likes?.length, post.reads])
     
     // set the user
     useEffect(() => {
@@ -75,7 +75,7 @@ function Post({ post }) {
         <article className="w-full first-of-type:border-t-0 lg:!border border-t border-slate-200 dark:border-slate-800/80 rounded-none lg:rounded-2xl pt-5 bg-white dark:bg-slate-950 flex flex-col gap-4 md:gap-5 md:pt-8 lg:p-6 lg:pb-5">
             <section className="flex flex-col gap-2 sm:gap-4">
                 {/* user data */}
-                <Link to={`users/${user._id}`}>
+                <Link to={`/users/${user._id}`}>
                     <div className="flex flex-col gap-6">
                         <div className="flex flex-row items-center justify-between">
                             <div className="flex flex-row items-center justify-start gap-3">
@@ -101,7 +101,7 @@ function Post({ post }) {
                     </div>
                 </Link>
                 {/* post data */}
-                <Link to={`posts/${_id}`}>
+                <Link to={`/posts/${_id}`}>
                     <div className="flex flex-col gap-4 md:gap-5 w-full" onClick={handleReads}>
                         <div className="w-full flex flex-col md:flex-row gap-3 sm:gap-4 md:gap-6 justify-between">
                         <div className="flex flex-col gap-1">
@@ -109,11 +109,11 @@ function Post({ post }) {
                                 <h1 className="font-heading text-base sm:text-xl font-semibold sm:font-bold  text-slate-700 dark:text-slate-200 hn-break-words cursor-pointer">{title}</h1>
                             </div>
                             <div className="hidden md:block">
-                                <a href="">
-                                    <span className="text-base hidden font-normal text-slate-500 dark:text-slate-400 hn-break-words cursor-pointer md:line-clamp-2">
-                                        {content}
-                                    </span>
-                                </a>
+                                <span
+                                    className="text-base hidden font-normal text-slate-500 dark:text-slate-400 hn-break-words cursor-pointer md:line-clamp-2"
+                                    dangerouslySetInnerHTML={{ __html: content }}
+                                >
+                                </span>
                             </div>
                         </div>
                         <div className="w-full rounded-xl md:rounded-lg bg-gray-100 dark:bg-gray-900 relative cursor-pointer md:basis-[180px] md:h-[108px] md:shrink-0">
@@ -146,7 +146,7 @@ function Post({ post }) {
             <section className="flex flex-col gap-5">
                 <div className="flex flex-row items-center justify-between text-slate-600 dark:text-slate-300 text-sm">
                     <div className="flex flex-row items-center justify-start gap-2">
-                        <a href="">
+                        <Link href={`/posts/${_id}`}>
                             <div className="group flex">
                                 <svg fill="none" viewBox="0 0 20 20" width="20" height="20">
                                     <path stroke="currentColor" d="M8.709 14.155a4.793 4.793 0 0 1 5.412-6.55m-5.412 6.55a4.793 4.793 0 0 0 6.31 2.54c.1-.044.21-.06.317-.042l2.213.37c.18.03.337-.127.307-.307l-.371-2.21a.566.566 0 0 1 .041-.316 4.793 4.793 0 0 0-3.405-6.586m-5.412 6.55a5.845 5.845 0 0 1-2.682-.461.689.689 0 0 0-.385-.05l-2.695.45a.324.324 0 0 1-.373-.373l.452-2.69a.689.689 0 0 0-.05-.386 5.835 5.835 0 0 1 9.482-6.435 5.808 5.808 0 0 1 1.663 3.395" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.25">
@@ -154,7 +154,7 @@ function Post({ post }) {
                                 </svg>
                                 <span className="discuss pl-1">Discuss</span>
                             </div>
-                        </a>
+                        </Link>
                         <p className="font-bold text-slate-400 dark:text-slate-500">·</p>
                         <p onClick={handleLikes}>{likes} likes</p>
                         <p className="font-bold text-slate-400 dark:text-slate-500">·</p>
@@ -162,7 +162,7 @@ function Post({ post }) {
                     </div>
                     <div className="flex-row items-center flex gap-1">
                         <div className="hidden sm:flex gap-2 items-center">
-                            <a href="">
+                            <a href={`/categories/${category}` }>
                                 <div className="flex justify-start items-center rounded-full px-2 py-1 cursor-pointer text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-700 w-min max-w-[126px] truncate text-left">
                                     <span className="truncate">{category}</span>
                                 </div>
