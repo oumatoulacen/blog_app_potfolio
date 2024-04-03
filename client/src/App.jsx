@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 // page imports
 import Home from './pages/Home'
-import Profile from './pages/Profile'
+// import Profile from './pages/Profile'
 import CreatePost from './pages/CreatePost'
 import EditPost from './pages/EditPost'
 import About from './pages/About'
@@ -30,7 +30,6 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
           <Route path="/users/:id" element={<UserProfile />} />
           <Route path="/create-post" element={<CreatePost />} />
           <Route path="/posts/edit-post/:id" element={<EditPost />} />
