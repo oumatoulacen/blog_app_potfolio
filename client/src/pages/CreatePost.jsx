@@ -37,7 +37,7 @@ export default function CreatePost() {
             formData.append('content', post.content);
             formData.append('image', post.image);
             formData.append('category', post.category);
-            formData.append('userId', localStorage.getItem('userId'));
+            formData.append('userId', localStorage.getItem('activeUserId'));
             console.log('formData: ', formData)
             await axios.post('http://localhost:5000/posts', formData, {
                 headers: {
@@ -85,7 +85,7 @@ export default function CreatePost() {
                     <label htmlFor="content" className="block text-gray-700">Content</label>
                     <ReactQuill theme="snow" className='h-72 mb-12' value={post.content} onChange={handleContent} name='content' id="content" />
                 </div>
-                <div className="my-4">
+                <div className="my-4 pt-6 sm:pt-0">
                     <label htmlFor="image" className="block text-gray-700">Image</label>
                     <input type="file" ref={fileInputRef} className="block w-full text-sm text-slate-500" id="image" name='image' onChange={handleChange} required/>
                 </div>
