@@ -27,4 +27,9 @@ router.put('/:postId/likes/:userId', PostController.likes)
 // get the posts of a category
 router.get('/categories/:category', PostController.findByCategory)
 
+// get comments of a post
+router.get('/:postId/comments', PostController.comments)
+// set comments to a post
+router.put('/:postId/comment', PostController.addComment)
+
 module.exports = router
