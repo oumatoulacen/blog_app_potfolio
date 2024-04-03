@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -82,7 +83,7 @@ function Post({ post }) {
                                 <a className="" href="/">
                                     <div className="flex items-center justify-center bg-slate-100 cursor-pointer relative w-10 h-10 rounded-full overflow-hidden">
                                         <div className="">
-                                            <img alt={title} src={getImageUrl(image)} decoding="async" data-nimg="fill" className="" loading="lazy"/>
+                                            <img alt={user.username} src={getImageUrl(user.avatar)} decoding="async" data-nimg="fill" className="" loading="lazy"/>
                                         </div>
                                     </div>
                                 </a>
@@ -146,7 +147,7 @@ function Post({ post }) {
             <section className="flex flex-col gap-5">
                 <div className="flex flex-row items-center justify-between text-slate-600 dark:text-slate-300 text-sm">
                     <div className="flex flex-row items-center justify-start gap-2">
-                        <Link href={`/posts/${_id}`}>
+                        <Link to={`/posts/${_id}#comments`}>
                             <div className="group flex">
                                 <svg fill="none" viewBox="0 0 20 20" width="20" height="20">
                                     <path stroke="currentColor" d="M8.709 14.155a4.793 4.793 0 0 1 5.412-6.55m-5.412 6.55a4.793 4.793 0 0 0 6.31 2.54c.1-.044.21-.06.317-.042l2.213.37c.18.03.337-.127.307-.307l-.371-2.21a.566.566 0 0 1 .041-.316 4.793 4.793 0 0 0-3.405-6.586m-5.412 6.55a5.845 5.845 0 0 1-2.682-.461.689.689 0 0 0-.385-.05l-2.695.45a.324.324 0 0 1-.373-.373l.452-2.69a.689.689 0 0 0-.05-.386 5.835 5.835 0 0 1 9.482-6.435 5.808 5.808 0 0 1 1.663 3.395" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.25">
