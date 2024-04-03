@@ -8,7 +8,7 @@ function getImageUrl(name) {
     return new URL(`../assets/${name}`, import.meta.url).href
   }
 
-
+// display posts by category
 function Category() {
     const category = useParams().category
     const [posts, setPosts] = useState([])
