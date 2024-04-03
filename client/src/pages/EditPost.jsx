@@ -60,7 +60,7 @@ export default function EditPost() {
     return (
         <div className=' container mx-auto flex flex-col justify-center items-center ms:min-w-[380px] ms:max-w-[400px] md:max-w-[800px] md:min-w-[600px]' >
             <h1 className="text-2xl font-bold mt-5">Edit Post</h1>
-            <form onSubmit={handleSubmit} className='p-10 rounded-lg border-2 border-green-600 w-full'>
+            <form onSubmit={handleSubmit} className='p-10 mx-5 rounded-lg border-2 border-green-600 w-full'>
                 <div className="mb-4">
                     <label htmlFor="title" className="block text-gray-700">Title</label>
                     <input type="text" className="form-input mt-1 block w-full" id="title" name='title' value={post.title} onChange={handleChange} required/>
