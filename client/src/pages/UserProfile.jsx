@@ -42,7 +42,7 @@ const Profile = () => {
                     <img src={user ? getImageUrl(user.avatar) : avatar} alt="" className="w-20 h-20 rounded-full" />
                     <div className="ml-5">
                         <h2 className="text-xl font-bold mt-2 pr-10">{user ? user.username : 'Username'}</h2>
-                        { activeUserId === user._id ? <button className="text-slate-200 bg-blue-600 rounded-lg px-3 py-1 font-bold"> + follow</button> : ''}
+                        { activeUserId === user._id ? <button className="text-slate-200 bg-blue-600 rounded-lg px-3 py-1 font-bold"> Edit </button> : <button className="text-slate-200 bg-blue-600 rounded-lg px-3 py-1 font-bold"> + follow</button>}
                     </div>
                 </div>
                 <div className="flex md:flex-row md:mt-16 md:p-10">
