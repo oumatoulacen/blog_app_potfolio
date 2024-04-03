@@ -12,7 +12,7 @@ function Home() {
   }, [])
 
   return (
-    <div className='flex justify-center flex-wrap'>
+    <div className='mx-10 md:mx-20 lg:mx-30 flex flex-col justify-center'>
       {
       posts.map((post, index) => (
         <Post key={index} post={post} />
