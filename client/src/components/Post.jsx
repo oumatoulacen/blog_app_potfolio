@@ -8,12 +8,11 @@ function getImageUrl(name) {
   }
 
 function Post({ post }) {
+     // userId is an object with the following properties: _id, username, avatar because of the populate method in the server
     const { _id, title, content, image, userId, category, createdAt } = post
     const [likes, setLikes] = useState([])
     const [reads, setReads] = useState(0)
-    const [read, setRead] = useState(false)
     const [user, setUser] = useState({})
-    const [liked, setLiked] = useState(false)
     const activeUserId = localStorage.getItem('userId')
     const navigate = useNavigate()
 
@@ -27,46 +26,33 @@ function Post({ post }) {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/users/${userId}`)
+                // userId is an object with the following properties: _id, username, avatar because of the populate method in the server, so we need to use userId._id instead of userId
+                const res = await axios.get(`http://localhost:5000/users/${userId._id}`)
                 setUser(res.data)
             } catch (err) {
-                console.log(err)
+                console.log(err.message)
             }
         }
         getUser()
     }, [userId])
 
     const handleLikes = async () => {
-        try {
-            if (liked) {
-                console.log('liked', likes)
-                setLiked(true)
-            } else {
-                console.log('liked not', likes)
-                setLiked(false)
-            }
+        try { 
             const res = await axios.put(`http://localhost:5000/posts/${_id}/likes/${activeUserId}`)
             setLikes(res.data.likes.length)
         } catch (err) {
-            console.log(err)
+            console.log(err.message)
         }
     }
     
     const handleReads = async () => {
         try {
-            console.log('Reading...')
-            if (read) {
-                navigate(`/posts/${_id}`)
-                return
-            }
             const res = await axios.put(`http://localhost:5000/posts/${_id}/reads/${userId}`)
             setReads(res.data.reads)
-            setRead(true)
-            console.log('navigated to the post page')
             // navigate to the post page
             navigate(`/posts/${_id}`)
         } catch (err) {
-            console.log(err)
+            console.log(err.message)
         }
     }
 
@@ -80,13 +66,13 @@ function Post({ post }) {
                     <div className="flex flex-col gap-6">
                         <div className="flex flex-row items-center justify-between">
                             <div className="flex flex-row items-center justify-start gap-3">
-                                <a className="" href="/">
+                                <Link className="" to="/">
                                     <div className="flex items-center justify-center bg-slate-100 cursor-pointer relative w-10 h-10 rounded-full overflow-hidden">
                                         <div className="">
                                             <img alt={user.username} src={getImageUrl(user.avatar)} decoding="async" data-nimg="fill" className="" loading="lazy"/>
                                         </div>
                                     </div>
-                                </a>
+                                </Link>
                                 <div className="flex flex-col">
                                     <div className="flex flex-row justify-start items-center text-sm gap-1">
                                         <div className="flex gap-2">
@@ -122,21 +108,17 @@ function Post({ post }) {
                             <div className="md:hidden">
                                 <div data-radix-aspect-ratio-wrapper="" style={{ position: "relative", width: "100%", paddingBottom: "56.25%" }}>
                                     <div style={{ position: "absolute", inset: "0px" }}>
-                                        <a className="block w-full h-full overflow-hidden rounded-xl md:rounded-lg focus:outline-none focus:ring focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 focus:dark:ring-offset-slate-800" href="/">
-                                            <span style={{ boxSizing: "border-box", display: "block", overflow: "hidden", width: "initial", height: "initial", background: "none", opacity: 1, border: "0px", margin: "0px", padding: "0px", position: "absolute", inset: "0px" }}>
-                                                <img alt="Architecture of my collaborative brainstorming app" src={getImageUrl(image)}  style={{ position: "absolute", inset: "0px", boxSizing: "border-box", padding: "0px", border: "none", margin: "auto", display: "block", width: "0px", height: "0px", minWidth: "100%", maxWidth: "100%", minHeight: "100%", maxHeight: "100%", objectFit: "cover" }} />
-                                            </span>
-                                        </a>
+                                        <span style={{ boxSizing: "border-box", display: "block", overflow: "hidden", width: "initial", height: "initial", background: "none", opacity: 1, border: "0px", margin: "0px", padding: "0px", position: "absolute", inset: "0px" }}>
+                                            <img alt="Architecture of my collaborative brainstorming app" src={getImageUrl(image)}  style={{ position: "absolute", inset: "0px", boxSizing: "border-box", padding: "0px", border: "none", margin: "auto", display: "block", width: "0px", height: "0px", minWidth: "100%", maxWidth: "100%", minHeight: "100%", maxHeight: "100%", objectFit: "cover" }} />
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                             {/* show in middle and lar  ge */}
                             <div className="hidden md:block w-full h-full">
-                            <a className="block w-full h-full overflow-hidden rounded-xl md:rounded-lg focus:outline-none focus:ring focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 focus:dark:ring-offset-slate-800" href="">
                                 <span style={{ boxSizing: "border-box", display: "block", overflow: "hidden", width: "initial", height: "initial", background: "none", opacity: 1, border: "0px", margin: "0px", padding: "0px", position: "absolute", inset: "0px" }}>
-                                <img alt={title} src={getImageUrl(image)} className="css-5eln6m" />
+                                    <img alt={title} src={getImageUrl(image)} className="css-5eln6m" />
                                 </span>
-                            </a>
                             </div>
                         </div>
                         </div>
@@ -153,6 +135,7 @@ function Post({ post }) {
                                     <path stroke="currentColor" d="M8.709 14.155a4.793 4.793 0 0 1 5.412-6.55m-5.412 6.55a4.793 4.793 0 0 0 6.31 2.54c.1-.044.21-.06.317-.042l2.213.37c.18.03.337-.127.307-.307l-.371-2.21a.566.566 0 0 1 .041-.316 4.793 4.793 0 0 0-3.405-6.586m-5.412 6.55a5.845 5.845 0 0 1-2.682-.461.689.689 0 0 0-.385-.05l-2.695.45a.324.324 0 0 1-.373-.373l.452-2.69a.689.689 0 0 0-.05-.386 5.835 5.835 0 0 1 9.482-6.435 5.808 5.808 0 0 1 1.663 3.395" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.25">
                                     </path>
                                 </svg>
+                                <span className="discuss pl-1">{ post.comments?.length }</span>
                                 <span className="discuss pl-1">Discuss</span>
                             </div>
                         </Link>
@@ -163,11 +146,11 @@ function Post({ post }) {
                     </div>
                     <div className="flex-row items-center flex gap-1">
                         <div className="hidden sm:flex gap-2 items-center">
-                            <a href={`/categories/${category}` }>
+                            <Link to={`/categories/${category}` }>
                                 <div className="flex justify-start items-center rounded-full px-2 py-1 cursor-pointer text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-700 w-min max-w-[126px] truncate text-left">
                                     <span className="truncate">{category}</span>
                                 </div>
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
