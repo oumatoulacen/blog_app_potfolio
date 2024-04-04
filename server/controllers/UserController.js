@@ -76,15 +76,31 @@ const UserController = {
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' })
+        res.send({ user, token })
     },
-    // Update a user
+    // Update a user with the given credentials and update the avatar to match the given file
     async update(req, res) {
         try {
-            await User.findByIdAndUpdate(req.params.id, req.body)
+            let avatar = 'avatar.png';
+            const { username, email } = req.body;
+            if (req.file) {
+                avatar = req.file.filename
+            }
+            if (!username || !email) {
+                return res.status(400).send('All fields are required')
+            }
+            const hashedPassword = await bcrypt.hash(password, 10)
+            await User.findByIdAndUpdate(req.params.id, {
+                username,
+                email,
+                password: hashedPassword,
+                avatar
+            })
             res.send('User updated successfully')
         } catch (error) {
             res.status(500).send(error)
         }
+      
     },
     // Delete a user
     async delete(req, res) {
@@ -94,7 +110,54 @@ const UserController = {
         } catch (error) {
             res.status(500).send(error)
         }
+    },
+    // Follow a user
+    async follow(req, res) {
+        try {
+            const { activeUserId, userId } = req.body
+            if (activeUserId === userId) {
+                return res.status(400).send('You cannot follow yourself')
+            }
+            let user = await User.findById(userId)
+            const activeUser = await User.findById(activeUserId)
+            if (!user.followers.includes(activeUserId)) {
+                await user.updateOne({ $push: { followers: activeUserId } })
+                await activeUser.updateOne({ $push: { following: userId } })
+                console.log(`${activeUser.username} is following ${user.username} now`)
+                // get the updated user
+                user = await User.findById(userId)
+                res.send(user)
+            } else {
+                res.status(400).send('You already follow this user')
+            }
+        } catch (err) {
+            res.status(500).send({error : err.message})
+        }
+    },
+    // Unfollow a user
+    async unfollow(req, res) {
+        try {
+            const { activeUserId, userId } = req.body
+            if (activeUserId === userId) {
+                return res.status(400).send('You cannot unfollow yourself')
+            }
+            let user = await User.findById(userId)
+            const activeUser = await User.findById(activeUserId)
+            if (user.followers.includes(activeUserId)) {
+                await user.updateOne({ $pull: { followers: activeUserId } })
+                await activeUser.updateOne({ $pull: { following: userId } })
+                console.log(`${activeUser.username} unfollowed ${user.username}`)
+                // get the updated user
+                user = await User.findById(userId)
+                res.send(user)
+            } else {
+                res.status(400).send('You do not follow this user')
+            }
+        } catch (err) {
+            res.status(500).send({error : err.message})
+        }
     }
+
 }
 
 module.exports = UserController
