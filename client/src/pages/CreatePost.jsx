@@ -11,6 +11,11 @@ export default function CreatePost() {
     const [notification, setNotification] = useState('');
     const categories = ['Technology', 'Science', 'Health', 'Sports', 'Music', 'Movies', 'Travel', 'Fashion', 'Food', 'Books', 'Business', 'Art', 'Design', 'Photography', 'Education', 'Fitness', 'Gaming', 'History', 'Nature', 'Politics', 'Religion', 'Space', 'Weather', 'Animals', 'Cars', 'DIY', 'Gardening', 'Home', 'Humor', 'Kids', 'Lifestyle', 'Parenting', 'Relationships', 'Self-Improvement', 'Spirituality', 'Writing', 'Others'];
     const navigate = useNavigate();
+    const activeUserId = localStorage.getItem('activeUserId');
+
+    if (!activeUserId) {
+        navigate('/sign-in');
+    }
 
     // Truncate long words
     const removeUnderscore = (word) => {
