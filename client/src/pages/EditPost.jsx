@@ -15,6 +15,11 @@ export default function EditPost() {
     const navigate = useNavigate();
     const { id } = useParams();
     const imgRef = useRef(null);
+    const activeUserId = localStorage.getItem('activeUserId');
+
+    if (!activeUserId) {
+        navigate('/sign-in');
+    }
 
     // get post by id
     useEffect(() => {
@@ -36,16 +41,16 @@ export default function EditPost() {
             let headersToSend;
             
             if (fileUpload) {
-            const formData = new FormData();
-            formData.append('title', post.title);
-            formData.append('content', post.content);
-            formData.append('image', fileUpload);
-    
-            dataToSend = formData;
-            headersToSend = { 'Content-Type': 'multipart/form-data' };
+                const formData = new FormData();
+                formData.append('title', post.title);
+                formData.append('content', post.content);
+                formData.append('image', fileUpload);
+        
+                dataToSend = formData;
+                headersToSend = { 'Content-Type': 'multipart/form-data' };
             } else {
-            dataToSend = post;
-            headersToSend = { 'Content-Type': 'application/json' };
+                dataToSend = post;
+                headersToSend = { 'Content-Type': 'application/json' };
             }
     
             await axios.put(`http://localhost:5000/posts/${id}`, dataToSend, { headers: headersToSend });
