@@ -15,49 +15,111 @@ const Profile = () => {
     const [user, setUser] = useState({});
     // store the user's posts
     const [posts, setPosts] = useState([]);
-
-    // get the user's ID from the local storage and get the user data from the server
-    useEffect(() => {
-        if (!activeUserId) {
-            window.location.href = '/sign-in';
-        } else {
-            axios.get(`http://localhost:5000/users/${id}`)
-                .then(res => setUser(res.data))
-                .catch(err => console.log(err.message));
-        }
-    }
-    , [id, activeUserId]);
-
-    // get the user's posts from the server
+    // status of a active user folliwing the user
+    const [follow, setFollow] = useState('Follow');
+    // get following and followers
+    const [followers, setFollowers] = useState(0);
+    
+    // get the user posts
     useEffect(() => {
         axios.get(`http://localhost:5000/users/${id}/posts`)
             .then(res => setPosts(res.data))
             .catch(err => console.log(err.message));
     }, [id]);
 
+    // get the user's ID from the local storage and get the user data
+    useEffect(() => {
+        if (!activeUserId) {
+            window.location.href = '/sign-in';
+        } else {
+            axios.get(`http://localhost:5000/users/${id}`)
+                .then(res => {
+                    setUser(res.data);
+                    setFollowers(res.data.followers.length || 0);
+                    if (res.data.followers.includes(activeUserId)) {
+                        setFollow('Unfollow')
+                    } else {
+                        setFollow('Follow')
+                    }
+
+                })
+                .catch(err => console.log(err.message));
+        }
+    }, [id, activeUserId]);
+
+    // handel the follow/unfollow button
+    const handleFollow = () => {
+        const data = {
+            activeUserId,
+            userId: id
+        };
+        const url = follow === 'Unfollow' ? `http://localhost:5000/users/${id}/unfollow` : `http://localhost:5000/users/${id}/follow`;
+        if (follow === 'Unfollow') {
+            setFollow('Follow')
+        } else {
+            setFollow('Unfollow')
+        }
+        axios.put(url, data)
+            .then(res => {
+                setUser(res.data);
+                setFollowers(res.data.followers.length || 0);
+            }).catch(
+                err => console.log(err.message)
+            );
+    };
+
+    // handle Edit profile
+    const handelEdit = () => {
+        console.log('editing')
+    }
+
     return (
-        <div className='mx-10 md:mx-20 lg:mx-30'>
-            <div className="flex flex-col md:flex-row">
-                <div className="flex items-center mt-16 p-5">
+        <div className='mx-10 md:mx-20 lg:mx-30 xl:mx-40'>
+            {/* user info */}
+            <div className="flex mt-10">
+                <div className="flex flex-col">
                     <img src={user ? getImageUrl(user.avatar) : avatar} alt="" className="w-20 h-20 rounded-full" />
-                    <div className="ml-5">
-                        <h2 className="text-xl font-bold mt-2 pr-10">{user ? user.username : 'Username'}</h2>
-                        { activeUserId === user._id ? <button className="text-slate-200 bg-blue-600 rounded-lg px-3 py-1 font-bold"> Edit </button> : <button className="text-slate-200 bg-blue-600 rounded-lg px-3 py-1 font-bold"> + follow</button>}
-                    </div>
                 </div>
-                <div className="flex md:flex-row md:mt-16 md:p-10">
-                    <h3 className="text-xl font-light  mx-5">
-                        <span className="text-green-600">{user.followers?.length}</span> Followers
+                <div className="flex md:flex-row mt-5 ml-2 gap-4 ">
+                    <h1 className="flex flex-col font-light">
+                        <span className="text-green-600">{posts.length}</span>
+                        <span className="">Posts</span>
+                    </h1>
+                    <h3 className="flex flex-col font-light ">
+                        <span className="text-green-600">{followers}</span>
+                        <span>Followers</span>
                     </h3>
-                    <h3 className="text-xl font-light mx-5">
-                        Following: <span className="text-green-600">{user.following?.length}</span>
+                    <h3 className="flex flex-col font-light">
+                        <span className="text-green-600">{user.following?.length}</span>
+                        <span>Following</span>
                     </h3>
                 </div>
             </div>
-            <div className="mt-16 border-t-2 border-gray-300">
-                <h1 className="text-xl font-bold my-4 pl-8 py-2 border border-slate-400">
-                    Posts: <span className="text-green-600">{posts.length}</span>
-                </h1>
+            <div className="flex flex-col items-start mt-5">
+                <h3 className="text-xl mt-2">Your Name: <span className='pl-4'>{user ? user.username : 'Username'}</span></h3>
+                {/* check if the user is visiting his profile or other users */}
+                {
+                    activeUserId === id ?
+                        <button className="bg-green-600 text-white p-2 rounded-lg mt-2" onClick={handelEdit}>
+                            Edit Profile
+                        </button> :
+                        <button className="bg-green-600 text-white p-2 rounded-lg mt-2" onClick={handleFollow}>
+                            { follow }
+                        </button>
+                }
+            </div>
+            {/* edit user profile form when edit profile button clicked */}
+            
+            {/* user posts */}
+            <div className="flex flex-col items-start mt-10 pb-2">
+            {
+                activeUserId === id ?
+                <h2 className="text-xl font-bold">Your Posts</h2> :
+                <h2 className="text-xl font-bold">{user.username}&apos;s Posts</h2>
+            }
+            </div>
+            <div className="border-t-2 border-gray-300">
+              
                 <div className="flex flex-col justify-center">
                     {
                         posts ?
