@@ -160,14 +160,14 @@ module.exports = {
             if (!text) {
                 return res.status(400).json({ msg: 'Comment is required' });
             }
-            const post = await Post.findById(postId).populate('comments.userId', 'username avatar email');
+            let post = await Post.findById(postId)
             console.log('post: ',post);
             if (!post) {
                 return res.status(404).json({ msg: 'Post not found' });
             }
             post.comments.push({ text, userId });
             await post.save();
-            console.log('comments: ',post.comments);
+            post = await Post.findById(postId).populate('comments.userId', 'username avatar email');
             res.json(post.comments);
         } catch (error) {
             return res.status(500).json({ msg: error.message });
