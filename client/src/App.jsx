@@ -6,7 +6,7 @@ import Home from './pages/Home'
 // import Profile from './pages/Profile'
 import CreatePost from './pages/CreatePost'
 import EditPost from './pages/EditPost'
-import About from './pages/About'
+// import About from './pages/About'
 import Signin from './pages/Signin'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
@@ -33,7 +33,7 @@ function App() {
           <Route path="/users/:id" element={<UserProfile />} />
           <Route path="/create-post" element={<CreatePost />} />
           <Route path="/posts/edit-post/:id" element={<EditPost />} />
-          <Route path="/about" element={<About />} />
+          {/* <Route path="/about" element={<About />} /> */}
           <Route path="/sign-in" element={<Signin />} />
           <Route path="/sign-up" element={<Signup />} />
           <Route path="/dashboard" element={<Dashboard />} />
