@@ -55,13 +55,16 @@ export default function Signin() {
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 ">
         <div className='border-2 border-slate-400 rounded-lg p-14  sm:mx-auto sm:w-full sm:max-w-sm'>
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-            <img
+            {/* <img
               className="mx-auto h-10 w-auto"
               src={logo}
               alt="Loumat"
-              />
+              /> */}
+            <h1 className="text-center text-gray-400 text-4xl font-bold leading-9 tracking-tight">
+              Welcome back!
+            </h1>
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-              Sign in to your account
+              Sign in to continue
             </h2>
           </div>
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
