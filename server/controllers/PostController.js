@@ -32,7 +32,7 @@ module.exports = {
     },
     find: async (req, res) => {
         try {
-            const posts = await Post.find() //.populate('user', 'name email')
+            const posts = await Post.find().populate('userId', 'username avatar email')
             res.json(posts)
         } catch (error) {
             return res.status(500).json({ msg: error.message })
@@ -40,7 +40,7 @@ module.exports = {
     },
     findById: async (req, res) => {
         try {
-            const post = await Post.findById(req.params.id).populate('userId', 'username avatar email')
+            const post = await Post.findById(req.params.postId).populate('userId', 'username avatar email')
             if (!post) {
                 return res.status(404).json({ msg: 'Post not found' })
             }
@@ -49,11 +49,14 @@ module.exports = {
             return res.status(500).json({ msg: error.message })
         }
     },
-    findByUserId: function (req, res) {
-        const userId = req.params.id
-        Post.find({ userId: userId })
-            .then(posts => res.json(posts))
-            .catch(err => res.status(400).json('Error: ' + err))
+    findByUserId: async (req, res) => {
+        try {
+            const userId = req.params.id
+            const posts = await Post.find({ userId: userId }).populate('userId', 'username avatar email')
+            res.json(posts)
+        } catch (error) {
+            return res.status(500).json({ msg: error.message })
+        }
     },
     update: async (req, res) => {
         try {
@@ -96,7 +99,7 @@ module.exports = {
     findByCategory: async (req, res) => {
         try {
             const category = req.params.category
-            const posts = await Post.find({ category: category })
+            const posts = await Post.find({ category: category }).populate('userId', 'username avatar email')
             res.json(posts)
         } catch (error) {
             return res.status(500).json({ msg: error.message })
