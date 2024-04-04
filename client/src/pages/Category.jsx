@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 
 import Post from '../components/Post'
 
-function getImageUrl(name) {
-    return new URL(`../assets/${name}`, import.meta.url).href
-  }
+// function getImageUrl(name) {
+//     return new URL(`../assets/${name}`, import.meta.url).href
+//   }
 
 // display posts by category
 function Category() {
     const category = useParams().category
     const [posts, setPosts] = useState([])
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
     // 20 categories allowed
     const categories = ['Technology', 'Science', 'Health', 'Sports', 'Music', 'Movies', 'Travel', 'Fashion', 'Food', 'Books', 'Business', 'Art', 'Design', 'Photography', 'Education', 'Fitness', 'Gaming', 'History', 'Nature', 'Politics', 'Religion', 'Space', 'Weather', 'Animals', 'Cars', 'DIY', 'Gardening', 'Home', 'Humor', 'Kids', 'Lifestyle', 'Parenting', 'Relationships', 'Self-Improvement', 'Spirituality', 'Writing', 'others']
 
