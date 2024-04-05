@@ -1,5 +1,4 @@
 const router = require('express').Router()
-const Post = require('../models/post.model')
 const upload = require('../middlewares/upload.middleware.js')
 const PostController = require('../controllers/PostController')
 
@@ -10,13 +9,13 @@ router.post('', upload.single('image'), PostController.create)
 router.get('', PostController.find)
 
 // Get a singl
-router.get('/:id', PostController.findById)
+router.get('/:postId', PostController.findById)
 
 // Update a post
-router.put('/:id', upload.single('image'), PostController.update)
+router.put('/:postId', upload.single('image'), PostController.update)
 
 // Delete a post
-router.delete('/:id', PostController.delete)
+router.delete('/:postId', PostController.delete)
 
 // handle reads
 router.put('/:postId/reads/:userId', PostController.reads)
