@@ -81,21 +81,24 @@ const UserController = {
     // Update a user with the given credentials and update the avatar to match the given file
     async update(req, res) {
         try {
-            let avatar = 'avatar.png';
-            const { username, email } = req.body;
+            let userData;
+            // Get the user data from the request body and check if the user wants to update the avatar
             if (req.file) {
-                avatar = req.file.filename
+                userData = { ...req.body, avatar: req.file.filename }
+                console.log('userData:', userData)
             }
-            if (!username || !email) {
-                return res.status(400).send('All fields are required')
+            else {
+                userData = req.body
             }
-            const hashedPassword = await bcrypt.hash(password, 10)
-            await User.findByIdAndUpdate(req.params.id, {
-                username,
-                email,
-                password: hashedPassword,
-                avatar
-            })
+            // remove the password from the user data if it is not provided
+            if (!userData.password) {
+                delete userData.password
+            }
+            // hash the password if it is provided
+            if (userData.password) {
+                userData.password = await bcrypt.hash(userData.password, 10)
+            }
+            await User.findByIdAndUpdate(req.params.id, userData)
             res.send('User updated successfully')
         } catch (error) {
             res.status(500).send(error)
