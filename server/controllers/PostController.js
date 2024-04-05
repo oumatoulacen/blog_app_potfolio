@@ -1,8 +1,5 @@
 const Post = require('../models/post.model')
-const User = require('../models/user.model')
-const upload = require('../middlewares/upload.middleware')
-const fs = require('fs')
-const path = require('path')
+
 
 module.exports = {
     create: async (req, res) => {
@@ -62,6 +59,7 @@ module.exports = {
         try {
             let image;
             const { title, content } = req.body;
+            console.log('update', req.body)
             if (req.file) {
                 image = req.file.filename
             }
@@ -69,13 +67,13 @@ module.exports = {
                 return res.status(400).json({ msg: 'All fields are required' })
             }
 
-            const post = await Post.findById(req.params.id)
+            const post = await Post.findById(req.params.postId)
             if (!post) {
                 return res.status(404).json({ msg: 'Post not found' })
             }
             const postUpdate = image ? { title, content, image } : { title, content }
 
-            await Post.findByIdAndUpdate(req.params.id, postUpdate, { new: true})
+            await Post.findByIdAndUpdate(req.params.postId, postUpdate, { new: true})
             
             res.json({ msg: 'Post updated successfully' })
         } catch (error) {
@@ -108,12 +106,12 @@ module.exports = {
     // increment reads
     reads: async (req, res) => {
         const postId = req.params.postId;
-        const post = await Post.findById(postId);
+        // increment the post reads
+        post = await Post.findByIdAndUpdate(postId, { $inc: { reads: 1 } }, { new: true });
+        
         if (!post) {
             return res.status(404).json({ msg: 'Post not found' });
         }
-        post.reads += 1;
-        await post.save();
         res.json(post);
     },
     likes: async (req, res) => {
@@ -127,12 +125,10 @@ module.exports = {
             }
             // check if likes has userId to remove it if not add it
             if (post.likes.includes(userId)) {
-                await Post.findByIdAndUpdate(postId, { $pull: { likes: userId } }, { new: true });
+                post = await Post.findByIdAndUpdate(postId, { $pull: { likes: userId } }, { new: true });
             } else {
-                post.likes.push(userId);
+                post = await Post.findByIdAndUpdate(postId, { $push: { likes: userId } }, { new: true });
             }
-            await post.save();
-            post = await Post.findById(postId);
             res.json(post);
         } catch (error) {
             return res.status(500).json({ msg: error.message });
@@ -160,14 +156,12 @@ module.exports = {
             if (!text) {
                 return res.status(400).json({ msg: 'Comment is required' });
             }
-            let post = await Post.findById(postId)
+            let post = await Post.findById(postId).populate('comments.userId', 'username avatar email');
             console.log('post: ',post);
             if (!post) {
                 return res.status(404).json({ msg: 'Post not found' });
             }
-            post.comments.push({ text, userId });
-            await post.save();
-            post = await Post.findById(postId).populate('comments.userId', 'username avatar email');
+            post = await Post.findByIdAndUpdate(postId, { $push: { comments: { text, userId } } }, { new: true }).populate('comments.userId', 'username avatar email');
             res.json(post.comments);
         } catch (error) {
             return res.status(500).json({ msg: error.message });
