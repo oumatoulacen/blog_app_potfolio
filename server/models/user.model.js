@@ -16,6 +16,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 4
     },
+    bio: {
+        type: String,
+        default: ''
+    },
     avatar: {
         type: String,
         default: 'avatar.png'
