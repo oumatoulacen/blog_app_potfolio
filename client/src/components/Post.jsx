@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import axios from 'axios'
 
 function getImageUrl(name) {
@@ -15,6 +15,7 @@ function Post({ post }) {
     const [user, setUser] = useState({})
     const activeUserId = localStorage.getItem('userId')
     const navigate = useNavigate()
+
 
     // set the likes and reads
     useEffect(() => {
