@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom'
 import axios from 'axios'
+import EditPostModal from '../components/EditPostModel'
 
 function getImageUrl(name) {
     return new URL(`../assets/${name}`, import.meta.url).href
@@ -17,6 +18,8 @@ function getImageUrl(name) {
     const [comments, setComments] = useState([])
     const postId = useParams().id
     const commentInputRef = useRef(null);
+    const [isEditing, setIsEditing] = useState(false);
+
     
     const location = useLocation();
     const navigate = useNavigate()
@@ -88,18 +91,6 @@ function getImageUrl(name) {
         }
     }
     
-    const handleReads = async () => {
-        try {
-            const res = await axios.put(`http://localhost:5000/posts/${postId}/reads/${activeUserId}`)
-            setReads(res.data.reads)
-            // navigate to the post page
-            navigate(`/posts/${postId}`)
-        } catch (err) {
-            console.log(err.message)
-        }
-    }
-
-
 
     // handle comments
     const handleComment = async (e) => {
@@ -120,78 +111,92 @@ function getImageUrl(name) {
         }
     }
 
+    // handle Edit post
+    const handleEditPost = () => {
+        setIsEditing(true);
+    };
+
   return (
     <div className='mx-5 sm:mx-16 md:mx-32 lg:mx-42'>
         <article className="w-full first-of-type:border-t-0 sm:!border border-t border-slate-200 dark:border-slate-800/80 rounded-none sm:rounded-2xl pt-5 bg-white dark:bg-slate-950 flex flex-col gap-4 sm:gap-5 sm:pt-8 sm:p-6 sm:pb-5">
+            {/* post author and post body */}
             <section className="flex flex-col gap-2 sm:gap-4">
-                {/* user data */}
-                <Link to={`/users/${user._id}`}>
-                    <div className="flex flex-col gap-6">
-                        <div className="flex flex-row items-center justify-between">
+                {/* user */}
+                <div className="flex flex-col gap-6">
+                    <div className="flex flex-row items-center justify-between">
+                        <Link to={`/users/${user._id}`}>
                             <div className="flex flex-row items-center justify-start gap-3">
-                                <Link className="" to="/">
-                                    <div className="flex items-center justify-center bg-slate-100 cursor-pointer relative w-10 h-10 rounded-full overflow-hidden">
-                                        <div className="">
-                                            <img alt={user.username} src={getImageUrl(user.avatar /* post.userId.avatar */)} decoding="async" data-nimg="fill" className="" loading="lazy"/>
-                                        </div>
+                                {/* user image */}
+                                <div className="flex items-center justify-center bg-slate-100 cursor-pointer relative w-10 h-10 rounded-full overflow-hidden">
+                                    <div className="">
+                                        <img alt={user.username} src={getImageUrl(user.avatar /* post.userId.avatar */)} decoding="async" data-nimg="fill" className="" loading="lazy"/>
                                     </div>
-                                </Link>
+                                </div>
+                                {/* user data */}
                                 <div className="flex flex-col">
                                     <div className="flex flex-row justify-start items-center text-sm gap-1">
-                                        <div className="flex gap-2">
-                                                <span className="font-semibold text-slate-700 dark:text-slate-200 cursor-pointer">{ user.username /*post.userId.username*/ }</span>
-                                        </div>
+                                            <div className="flex gap-2">
+                                                    <span className="font-semibold text-slate-700 dark:text-slate-200 cursor-pointer">{ user.username /*post.userId.username*/ }</span>
+                                            </div>
                                     </div>
                                     <div className="flex flex-row items-center justify-start gap-1">
                                         <p className="text-sm text-slate-500 dark:text-slate-400 font-normal"> { post.createdAt?.slice(0, 10)?.replace('-', ' . ')?.replace('-', ' . ') } </p>
                                     </div>
                                 </div>
                             </div>
+                        </Link>
+                        {/* edit post */}
+                        <div className="flex items-center justify-center">
+                            <button onClick={handleEditPost} className="text-sm bg-slate-300 text-slate-500 dark:text-slate-400 font-normal cursor-pointer rounded-xl p-1">Edit Post</button>
                         </div>
                     </div>
-                </Link>
-                {/* post data */}
+                </div>
+                {/* post */}
                 <Link to={`/posts/${postId}`}>
-                    <div className="flex flex-col gap-4 md:gap-5 w-full" onClick={handleReads}>
+                    <div className="flex flex-col gap-4 md:gap-5 w-full">
+                        {/* post data */}
                         <div className="w-full flex flex-col md:flex-row gap-3 sm:gap-4 md:gap-6 justify-between">
-                        <div className="flex flex-col gap-1">
-                            <div>
-                                <h1 className="font-heading text-base sm:text-xl font-semibold sm:font-bold  text-slate-700 dark:text-slate-200 hn-break-words cursor-pointer">{post.title}</h1>
-                            </div>
-                            <div className="md:block">
-                                <span
-                                    className="text-base  font-normal text-slate-500 dark:text-slate-400 hn-break-words cursor-pointer"
-                                    dangerouslySetInnerHTML={{ __html: post.content }}
-                                >
-                                </span>
-                            </div>
-                        </div>
-                        <div className="w-full rounded-xl md:rounded-lg bg-gray-100 dark:bg-gray-900 relative cursor-pointer md:basis-[180px] md:h-[108px] md:shrink-0">
-                            {/* shown in sm */}
-                            <div className="md:hidden">
-                                <div data-radix-aspect-ratio-wrapper="" style={{ position: "relative", width: "100%", paddingBottom: "56.25%" }}>
-                                    <div style={{ position: "absolute", inset: "0px" }}>
-                                        <Link className="block w-full h-full overflow-hidden rounded-xl md:rounded-lg focus:outline-none focus:ring focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 focus:dark:ring-offset-slate-800" to="/">
-                                            <span style={{ boxSizing: "border-box", display: "block", overflow: "hidden", width: "initial", height: "initial", background: "none", opacity: 1, border: "0px", margin: "0px", padding: "0px", position: "absolute", inset: "0px" }}>
-                                                <img alt="Architecture of my collaborative brainstorming app" src={getImageUrl(post.image)}  style={{ position: "absolute", inset: "0px", boxSizing: "border-box", padding: "0px", border: "none", margin: "auto", display: "block", width: "0px", height: "0px", minWidth: "100%", maxWidth: "100%", minHeight: "100%", maxHeight: "100%", objectFit: "cover" }} />
-                                            </span>
-                                        </Link>
-                                    </div>
+                            {/* post title and content */}
+                            <div className="flex flex-col gap-1">
+                                <div>
+                                    <h1 className="font-heading text-base sm:text-xl font-semibold sm:font-bold  text-slate-700 dark:text-slate-200 hn-break-words cursor-pointer">{post.title}</h1>
+                                </div>
+                                <div className="md:block">
+                                    <span
+                                        className="text-base  font-normal text-slate-500 dark:text-slate-400 hn-break-words cursor-pointer"
+                                        dangerouslySetInnerHTML={{ __html: post.content }}
+                                    >
+                                    </span>
                                 </div>
                             </div>
-                            {/* show in middle and lar  ge */}
-                            <div className="hidden md:block w-full h-full">
-                            <Link className="block w-full h-full overflow-hidden rounded-xl md:rounded-lg focus:outline-none focus:ring focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 focus:dark:ring-offset-slate-800" to="">
-                                <span style={{ boxSizing: "border-box", display: "block", overflow: "hidden", width: "initial", height: "initial", background: "none", opacity: 1, border: "0px", margin: "0px", padding: "0px", position: "absolute", inset: "0px" }}>
-                                    <img alt={post.title} src={getImageUrl(post.image)} className="css-5eln6m" />
-                                </span>
-                            </Link>
+                            {/* post image */}
+                            <div className="w-full rounded-xl md:rounded-lg bg-gray-100 dark:bg-gray-900 relative cursor-pointer md:basis-[180px] md:h-[108px] md:shrink-0">
+                                {/* shown in sm */}
+                                <div className="md:hidden">
+                                    <div data-radix-aspect-ratio-wrapper="" style={{ position: "relative", width: "100%", paddingBottom: "56.25%" }}>
+                                        <div style={{ position: "absolute", inset: "0px" }}>
+                                            <Link className="block w-full h-full overflow-hidden rounded-xl md:rounded-lg focus:outline-none focus:ring focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 focus:dark:ring-offset-slate-800" to="/">
+                                                <span style={{ boxSizing: "border-box", display: "block", overflow: "hidden", width: "initial", height: "initial", background: "none", opacity: 1, border: "0px", margin: "0px", padding: "0px", position: "absolute", inset: "0px" }}>
+                                                    <img alt="Architecture of my collaborative brainstorming app" src={getImageUrl(post.image)}  style={{ position: "absolute", inset: "0px", boxSizing: "border-box", padding: "0px", border: "none", margin: "auto", display: "block", width: "0px", height: "0px", minWidth: "100%", maxWidth: "100%", minHeight: "100%", maxHeight: "100%", objectFit: "cover" }} />
+                                                </span>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* show in middle and large */}
+                                <div className="hidden md:block w-full h-full">
+                                <Link className="block w-full h-full overflow-hidden rounded-xl md:rounded-lg focus:outline-none focus:ring focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 focus:dark:ring-offset-slate-800" to="">
+                                    <span style={{ boxSizing: "border-box", display: "block", overflow: "hidden", width: "initial", height: "initial", background: "none", opacity: 1, border: "0px", margin: "0px", padding: "0px", position: "absolute", inset: "0px" }}>
+                                        <img alt={post.title} src={getImageUrl(post.image)} className="css-5eln6m" />
+                                    </span>
+                                </Link>
+                                </div>
                             </div>
-                        </div>
                         </div>
                     </div>
                 </Link>
             </section>
+
             {/* post interactions */}
             <section className="flex flex-col gap-5">
                 <div className="flex flex-row items-center justify-between text-slate-600 dark:text-slate-300 text-sm">
@@ -233,6 +238,10 @@ function getImageUrl(name) {
                     </div>
                 </div>
             </section>
+
+            {/* edit post modal */}
+            {isEditing && <EditPostModal isOpen={isEditing} onClose={() => setIsEditing(false)} post={post} />}
+
             {/* write a comment */}
             <section className="flex flex-col gap-2 p-3 border border-b-slate-500" id="comments">
                 <div className="flex items-center justify-start gap-2">
@@ -248,7 +257,6 @@ function getImageUrl(name) {
                   <button className="bg-green-500 hover:bg-blue-700 text-white font-bold px-4 rounded" onClick={addComment}>Comment</button>
                 </div>
             </section>
-
 
             {/* display comments section */}
             <section className='flex gap-4'>
@@ -298,8 +306,7 @@ function getImageUrl(name) {
                     }
                 </div>
             </section>
-      </article>
-        
+        </article>
     </div>
   );
 }
